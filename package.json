@@ -12,5 +12,8 @@
     "follower"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "twitter": "^1.7.1"
+  }
 }
