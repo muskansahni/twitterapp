@@ -1,45 +1,16 @@
-var Twitter = require('twitter');
- 
-var client = new Twitter({
-  consumer_key: '',
-  consumer_secret: '',
-  access_token_key: '',
-  access_token_secret: ''
+var express = require('express');
+var app=express();
+var bodyparser=require('body-parser');
+var userList= require('./user.js');
+app.set('view engine','ejs');
+app.use(bodyparser.urlencoded({ extended: false }));
+app.get('/',function (req,res) {
+    res.render('index');
 });
- var one_way=[];
- var user_display=[];
-var params = {screen_name: 'nodejs'};
-client.get('followers/ids', params, function(error, follower_results, response) {
-  if (error) 
-    throw error;
-  var followers=follower_results.ids;
-  client.get('friends/ids', params, function(error, following_results, response) {
-    if (error) {
-      throw error;
-    }
-    var following=following_results.ids;
-    following.forEach(function(person){
-       if(followers.indexOf(person)===-1){
-           one_way.push(person);
-       }
-    });
-one_way=one_way.slice(0,99);
-var one_way_string=one_way.join();
-client.get('users/lookup', {user_id:one_way_string}, function(error, user_results, response) {
-    if (error) {
-      throw error;
-    }
-user_results.forEach(function(user){
-    var user_obj={
-        name:user.screen_name,
-        avatar:user.profile_image_url
-    };
-    user_display.push(user_obj);
-    
+app.post('/get_users',function(req,res) {
+    var screen_name=req.body.handle;
+   var users=userList(res,screen_name);
 });
-console.log(user_display);
-  });
-
-  });
-  
+var server=app.listen(3000,function (req,res) {
+    console.log('server running');
 });
